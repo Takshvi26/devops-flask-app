@@ -1,47 +1,10 @@
 pipeline {
-    agent any // Use any available Jenkins machine
-
-    environment {
-        DOCKER_IMAGE = 'yourdockerhubusername/flask-app' // Name of your Docker image
-    }
+    agent any
 
     stages {
-        stage('Get Code') {
+        stage('Test') {
             steps {
-                git 'https://github.com/your-username/your-repo.git' // Download your code
-            }
-        }
-
-        stage('Build Docker Image') {
-            steps {
-                script {
-                    docker.build(DOCKER_IMAGE) // Build the Docker image from your Dockerfile
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                withDockerRegistry([credentialsId: 'dockerhub-creds', url: '']) {
-                    script {
-                        docker.image(DOCKER_IMAGE).push('latest') // Push the image to Docker Hub
-                    }
-                }
-            }
-        }
-
-        stage('Deploy to EC2') {
-            steps {
-                sshagent(['ec2-key']) { // Use SSH credentials to connect to EC2
-                    sh '''
-                    ssh -o StrictHostKeyChecking=no ec2-user@<EC2-IP> "
-                    docker pull yourdockerhubusername/flask-app:latest && \
-                    docker stop flask-app || true && \
-                    docker rm flask-app || true && \
-                    docker run -d -p 80:5000 --name flask-app yourdockerhubusername/flask-app:latest
-                    "
-                    ''' // Pull new image and run it on EC2
-                }
+                echo '🎉 Jenkins is working!'
             }
         }
     }
